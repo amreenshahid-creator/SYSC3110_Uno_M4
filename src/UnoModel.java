@@ -305,12 +305,18 @@ public class UnoModel {
      * - Clears each all players and their scores.
      * - Resets current player and direction.
      */
-    public void newGame() {
+    public void newGame(List<String> player, List<Boolean> isAI) {
         players.clear();
+        finalScores.clear();
+
+        for(int i = 0; i < player.size(); i++) {
+            players.add(new Player(player.get(i), isAI.get(i)));     //Add new players
+            finalScores.put(player.get(i), 0);                       //Set each players score to 0
+        }
+
         side = Side.LIGHT;
         currPlayerIndex = 0;
         direction = 1;
-        finalScores.clear();
         notifyViews();
     }
 
