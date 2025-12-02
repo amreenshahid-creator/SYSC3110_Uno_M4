@@ -8,8 +8,4 @@ public class UnoEvent extends EventObject {
         super(model);
         this.model = model;
     }
-
-    public UnoModel getModel() {
-        return model;
-    }
 }
