@@ -60,7 +60,6 @@ public class UnoModel {
     //Holds the new chosen colour for the Wild Stack card
     private ColoursDark newColour;
 
-
     /**
      * Generates a random card. In this milestone, there is no physical deck;
      * draws are random and infinite.

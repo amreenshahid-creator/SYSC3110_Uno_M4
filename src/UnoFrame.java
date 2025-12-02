@@ -155,14 +155,14 @@ public class UnoFrame implements UnoView {
         int count = Integer.parseInt(playerCount);
         playerName = new ArrayList<>();
         aiPlayers = new ArrayList<>();
-        for (int i = 1; i <= count; i++){
+        for (int i = 1; i <= count; i++) {
             String name = JOptionPane.showInputDialog(
                     frame,
-                    "Enter name for Player "+ i + ":",
+                    "Enter name for Player " + i + ":",
                     "Player Setup",
                     JOptionPane.QUESTION_MESSAGE
             );
-            if (name == null || name.trim().isEmpty()){
+            if (name == null || name.trim().isEmpty()) {
                 name = "Player" + i;
             }
             playerName.add(name);
@@ -262,6 +262,7 @@ public class UnoFrame implements UnoView {
         return colourSelected;
     }
 
+
     /**
      * Opens a dialog to let the user choose an option once round is over
      * @return the chosen option (New Round, Quit) or null if cancelled
@@ -278,6 +279,76 @@ public class UnoFrame implements UnoView {
                 options[0]
         );
         return optionSelected;
+    }
+
+    /**
+     * Opens a dialog to let the user choose an option once game is over
+     * @return the chosen option (New Game, Quit) or null if cancelled
+     */
+    public String newGameSelectionDialog() {
+        String[] options = {"New Game", "Quit"};
+        String optionSelected = (String) JOptionPane.showInputDialog(frame, "New Game or Quit", "Game Over", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        return optionSelected;
+    }
+
+    public void playerSelectionDialog() {
+        // ----- Prompt Player Count -----
+        String[] playerOptions = {"2", "3", "4"};
+        String playerCount = (String) JOptionPane.showInputDialog(
+                frame,
+                "Select Number of Players:",
+                "Player Setup",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                playerOptions,
+                playerOptions[0]
+        );
+
+        // If canceled, exit
+        if (playerCount == null){
+            System.exit(0);
+        }
+
+        // ----- Prompt Player Names + AI/Human -----
+        int count = Integer.parseInt(playerCount);
+        playerName = new ArrayList<>();
+        aiPlayers = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            String name = JOptionPane.showInputDialog(
+                    frame,
+                    "Enter name for Player " + i + ":",
+                    "Player Setup",
+                    JOptionPane.QUESTION_MESSAGE
+            );
+            if (name == null || name.trim().isEmpty()) {
+                name = "Player" + i;
+            }
+            playerName.add(name);
+
+            Object[] typeOptions = {"Human", "AI"};
+            int choice = JOptionPane.showOptionDialog(
+                    frame,
+                    "Is " + name + " a Human or AI player?",
+                    "Player Type",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    typeOptions,
+                    typeOptions[0]
+            );
+            boolean isAI = (choice == 1); // 0 = Human, 1 = AI, anything else defaults to Human
+            aiPlayers.add(isAI);
+        }
+
+        // ----- Setup Scoreboard for Actual Player Count -----
+        scoreBoardPanel.removeAll();
+        scoreBoardPanel.setLayout(new GridLayout(playerName.size(), 1, 5, 5));
+        for(int i = 0; i < playerName.size(); i++){
+            JLabel scores = new JLabel(playerName.get(i) + ": 0");
+            scoreBoardPanel.add(scores);
+        }
+        scoreBoardPanel.revalidate();
+        scoreBoardPanel.repaint();
     }
 
     /** @return list of player names entered during setup. */

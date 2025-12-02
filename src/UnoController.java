@@ -397,6 +397,18 @@ public class UnoController implements ActionListener {
                     if (matchOver) {
                         view.updateStatusMessage("Game over: " + winner.getName() + " wins the game, reaching 500 or more points.");
                         frame.disableAllButtons();
+
+                        String option = frame.newGameSelectionDialog();
+                        if(option == null || option.equals("Quit")) {
+                            System.exit(0);
+                        } else {
+                            frame.playerSelectionDialog();
+                            model.newGame(frame.getPlayerName(), frame.getAiPlayers());
+                            model.newRound();
+                            view.updateHandPanel(model, this);
+                            frame.enableCards();
+                            view.updateStatusMessage("New game started. It is " + model.getCurrPlayer().getName() + "'s turn.");
+                        }
                         return;
                     } else {
                         String option = frame.newRoundSelectionDialog();
