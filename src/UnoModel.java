@@ -301,6 +301,20 @@ public class UnoModel {
     }
 
     /**
+     * Starts a new game:
+     * - Clears each all players and their scores.
+     * - Resets current player and direction.
+     */
+    public void newGame() {
+        players.clear();
+        side = Side.LIGHT;
+        currPlayerIndex = 0;
+        direction = 1;
+        finalScores.clear();
+        notifyViews();
+    }
+
+    /**
      * Computes the round score earned by the winner:
      * Sum of point values of all other players' remaining cards.
      * @param winner player who emptied their hand
