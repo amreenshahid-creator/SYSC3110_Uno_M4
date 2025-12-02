@@ -248,6 +248,10 @@ public class UnoFrame implements UnoView {
         return colourSelected;
     }
 
+    /**
+     * Opens a dialog to let the user choose the new colour for a WILD_STACK card.
+     * @return the chosen colour (TEAL, PURPLE, PINK, ORANGE) or null if cancelled
+     */
     public String colourSelectionDialogDark() {
         String[] colours = {"TEAL", "PURPLE", "PINK", "ORANGE"};
         String colourSelected = (String) JOptionPane.showInputDialog(
@@ -261,7 +265,6 @@ public class UnoFrame implements UnoView {
         );
         return colourSelected;
     }
-
 
     /**
      * Opens a dialog to let the user choose an option once round is over
@@ -291,6 +294,12 @@ public class UnoFrame implements UnoView {
         return optionSelected;
     }
 
+    /**
+     * Sets each players scores to 0 and opens dialogs to let the user choose:
+     * -Number of players
+     * -Names of the players
+     * -Human or AI
+     */
     public void playerSelectionDialog() {
         // ----- Prompt Player Count -----
         String[] playerOptions = {"2", "3", "4"};
@@ -458,6 +467,10 @@ public class UnoFrame implements UnoView {
         }
     }
 
+
+    /**
+     * Disables all card buttons.
+     */
     public void disableCardButtons() {
         drawButton.setEnabled(true);
         nextButton.setEnabled(false);
