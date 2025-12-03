@@ -1,5 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -156,8 +158,41 @@ public class UnoController implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+
+        if (command.equals("Save Game")) {
+            File saveTarget = frame.chooseSaveFile();
+            if (saveTarget != null) {
+                try {
+                    model.saveGame(saveTarget);
+                    view.updateStatusMessage("Game saved to " + saveTarget.getName());
+                } catch (IOException ex) {
+                    frame.showError("Unable to save game: " + ex.getMessage());
+                }
+            }
+            return;
+        }
+
+        if (command.equals("Load Game")) {
+            File saveTarget = frame.chooseLoadFile();
+            if (saveTarget != null) {
+                try {
+                    model.loadGame(saveTarget);
+                    frame.syncPlayersFromModel(model);
+                    frame.refreshScoreboard(model);
+                    view.updateHandPanel(model, this);
+                    frame.enableCards();
+                    updateStatusWithPending("Loaded game. It is " + model.getCurrPlayer().getName() + "'s turn.");
+                    maybeRunAITurn();
+                } catch (IOException | ClassNotFoundException ex) {
+                    frame.showError("Unable to load game: " + ex.getMessage());
+                }
+            }
+            return;
+        }
+
         // Handle "Next Player" button presses
-        if (e.getActionCommand().equals("Next Player")) {
+        if (command.equals("Next Player")) {
             if (!isAdvanced) {
                 model.advance();
             }
