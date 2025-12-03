@@ -1,11 +1,14 @@
 // Player.java
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Player entity: holds a name, an AI flag, and the personal hand.
  */
-public class Player {
+public class Player implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** The cards currently in this player's hand. */
     private final List<Card> personalDeck = new ArrayList<>();
