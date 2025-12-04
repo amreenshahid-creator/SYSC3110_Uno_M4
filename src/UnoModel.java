@@ -499,6 +499,14 @@ public class UnoModel implements Serializable {
     }
 
     /**
+     * @return immutable list of players in seating order.
+     */
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(players);
+    }
+
+
+    /**
      * Adds a new player by name and initializes their cumulative score to 0.
      * @param playerName display name
      * @param isAI whether the player is computer-controlled
