@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 /**
@@ -17,7 +18,7 @@ import java.util.*;
  * - Random draws use {@link java.util.Random}; no persistence of a physical deck in this version.
  */
 
-public class UnoModel {
+public class UnoModel implements Serializable {
     /** Available light card colours. Wilds use null colour. */
     public enum Colours {RED, YELLOW, GREEN, BLUE}
 
@@ -59,6 +60,9 @@ public class UnoModel {
 
     //Holds the new chosen colour for the Wild Stack card
     private ColoursDark newColour;
+
+    //For serialization
+    private static final long serialVersionUID = 1L;
 
     /**
      * Generates a random card. In this milestone, there is no physical deck;
@@ -435,7 +439,7 @@ public class UnoModel {
     /**
      * Updates cumulative scores and checks if any player reached the winning threshold.
      * @param winner player who just won the round
-     * @return true if someone (possibly the winner) reached the match target (e.g., 500)
+     * @return true if someone (possibly the winner) reached the match target
      */
     public boolean checkWinner(Player winner) {
         int winnerScore = getScore(winner);
@@ -450,6 +454,12 @@ public class UnoModel {
         return false;
     }
 
+    /**
+     * @return copy of the cumulative scores keyed by player name.
+     */
+    public Map<String, Integer> getFinalScores() {
+        return new HashMap<>(finalScores);
+    }
 
     /**
      * Legal play check:
@@ -569,6 +579,84 @@ public class UnoModel {
 
         for(UnoView v: views) {
             v.update(event);
+        }
+    }
+
+    // ---------- Serialization helpers ----------
+
+    /**
+     * Persists the current game state to the provided file path.
+     *
+     * @param file destination file for the serialized state
+     * @throws IOException if writing to disk fails
+     */
+    public void saveGame(File file) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(new GameState(this));
+        }
+    }
+
+    /**
+     * Loads game state from disk and replaces the current model data.
+     *
+     * @param file saved-game file to load
+     * @throws IOException if file access fails or contents are invalid
+     * @throws ClassNotFoundException if the stored classes cannot be resolved
+     */
+    public void loadGame(File file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            Object data = in.readObject();
+            if (!(data instanceof GameState state)) {
+                throw new IOException("Invalid save file");
+            }
+            applyState(state);
+        }
+    }
+
+    private void applyState(GameState state) {
+        players.clear();
+        players.addAll(state.players);
+
+        finalScores.clear();
+        finalScores.putAll(state.finalScores);
+
+        currPlayerIndex = state.currPlayerIndex;
+        direction = state.direction;
+        topCard = state.topCard;
+        side = state.side;
+        isWildStackCard = state.isWildStackCard;
+        newColour = state.newColour;
+
+        notifyViews();
+    }
+
+    private static class GameState implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final List<Player> players;
+        private final Map<String, Integer> finalScores;
+        private final int currPlayerIndex;
+        private final int direction;
+        private final Card topCard;
+        private final Side side;
+        private final boolean isWildStackCard;
+        private final ColoursDark newColour;
+
+        GameState(UnoModel model) {
+            this.players = new ArrayList<>();
+            for (Player p : model.players) {
+                Player copy = new Player(p.getName(), p.isAI());
+                copy.getPersonalDeck().addAll(p.getPersonalDeck());
+                this.players.add(copy);
+            }
+
+            this.finalScores = new HashMap<>(model.finalScores);
+            this.currPlayerIndex = model.currPlayerIndex;
+            this.direction = model.direction;
+            this.topCard = model.topCard;
+            this.side = model.side;
+            this.isWildStackCard = model.isWildStackCard;
+            this.newColour = model.newColour;
         }
     }
 
