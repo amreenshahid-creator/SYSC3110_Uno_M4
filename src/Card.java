@@ -3,7 +3,10 @@
  * <p>
  * For WILD/WILD_DRAW_TWO, colour may be null until chosen by a player.
  */
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable {
+    private static final long serialVersionUID = 1L;
     private UnoModel.Colours colour;             // can be reassigned for wilds via wild()/wildDrawTwo()
     private final UnoModel.Values value;
     private UnoModel.ColoursDark colourDark;
