@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -43,6 +44,12 @@ public class UnoFrame implements UnoView {
 
     /** Button to advance to the next player. */
     private JButton nextButton;
+
+    /** Button to save current game. */
+    private JButton saveButton;
+
+    /** Button to load a saved game. */
+    private JButton loadButton;
 
     /** Scrollable wrapper for the hand panel. */
     private JScrollPane deckScrollPane;
@@ -115,8 +122,12 @@ public class UnoFrame implements UnoView {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         drawButton = new JButton("Draw Card");
         nextButton = new JButton("Next Player");
+        saveButton = new JButton("Save Game");
+        loadButton = new JButton("Load Game");
         buttonPanel.add(drawButton);
         buttonPanel.add(nextButton);
+        buttonPanel.add(saveButton);
+        buttonPanel.add(loadButton);
 
         // ----- Right-hand control section -----
         controlPanel = new JPanel(new BorderLayout());
@@ -181,7 +192,6 @@ public class UnoFrame implements UnoView {
         }
 
         frame.setVisible(true);
-
 
         // ----- Setup Scoreboard for Actual Player Count -----
         scoreBoardPanel.removeAll();
@@ -437,6 +447,10 @@ public class UnoFrame implements UnoView {
         nextButton.setActionCommand("Next Player");
         drawButton.addActionListener(controller);
         drawButton.setActionCommand("Draw Card");
+        saveButton.addActionListener(controller);
+        saveButton.setActionCommand("Save Game");
+        loadButton.addActionListener(controller);
+        loadButton.setActionCommand("Load Game");
     }
 
     /**
@@ -490,11 +504,81 @@ public class UnoFrame implements UnoView {
         drawButton.setEnabled(false);
         nextButton.setEnabled(false);
 
+        if (saveButton != null) {
+            saveButton.setEnabled(true);
+        }
+        if (loadButton != null) {
+            loadButton.setEnabled(true);
+        }
+
         for(Component comp: handPanel.getComponents()) {
             if(comp instanceof JButton) {
                 comp.setEnabled(false);
             }
         }
+    }
+
+    /**
+     * Prompts the user to choose a file location for saving.
+     * @return selected file or null if the dialog was cancelled
+     */
+    public File chooseSaveFile() {
+        JFileChooser chooser = new JFileChooser();
+        int result = chooser.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile();
+        }
+        return null;
+    }
+
+    /**
+     * Prompts the user to choose a previously saved game file.
+     * @return selected file or null if the dialog was cancelled
+     */
+    public File chooseLoadFile() {
+        JFileChooser chooser = new JFileChooser();
+        int result = chooser.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile();
+        }
+        return null;
+    }
+
+    /**
+     * Shows an error dialog when persistence fails.
+     * @param message text to display
+     */
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Save/Load Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Updates stored player metadata to mirror the model contents.
+     * @param model the UnoModel being displayed
+     */
+    public void syncPlayersFromModel(UnoModel model) {
+        playerName = new ArrayList<>();
+        aiPlayers = new ArrayList<>();
+        for (Player player : model.getPlayers()) {
+            playerName.add(player.getName());
+            aiPlayers.add(player.isAI());
+        }
+    }
+
+    /**
+     * Refreshes the scoreboard labels using the model's current scores.
+     * @param model the UnoModel providing score data
+     */
+    public void refreshScoreboard(UnoModel model) {
+        scoreBoardPanel.removeAll();
+        scoreBoardPanel.setLayout(new GridLayout(model.getPlayers().size(), 1, 5, 5));
+        Map<String, Integer> scores = model.getFinalScores();
+        for (Player p : model.getPlayers()) {
+            int score = scores.getOrDefault(p.getName(), 0);
+            scoreBoardPanel.add(new JLabel(p.getName() + ": " + score));
+        }
+        scoreBoardPanel.revalidate();
+        scoreBoardPanel.repaint();
     }
 
     // ---------------- Interface Methods ----------------
