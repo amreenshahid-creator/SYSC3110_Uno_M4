@@ -132,8 +132,6 @@ public class UnoFrame implements UnoView {
 
         frame.add(controlPanel, BorderLayout.EAST);
 
-        frame.setVisible (true);
-
         // ----- Prompt Player Count -----
         String[] playerOptions = {"2", "3", "4"};
         String playerCount = (String) JOptionPane.showInputDialog(
@@ -181,6 +179,9 @@ public class UnoFrame implements UnoView {
             boolean isAI = (choice == 1); // 0 = Human, 1 = AI, anything else defaults to Human
             aiPlayers.add(isAI);
         }
+
+        frame.setVisible(true);
+
 
         // ----- Setup Scoreboard for Actual Player Count -----
         scoreBoardPanel.removeAll();
@@ -564,6 +565,7 @@ public class UnoFrame implements UnoView {
             }
         }
     }
+
 
     /**
      * Main method to launch the standalone UNO game window.

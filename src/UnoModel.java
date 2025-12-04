@@ -98,7 +98,58 @@ public class UnoModel {
     public void playCard(Card card) {
         getCurrPlayer().getPersonalDeck().remove(card);
         topCard = card;
+
+        if(side == Side.LIGHT) {
+            playLightCard(card);
+        } else {
+            playDarkCard(card);
+        }
         notifyViews();
+    }
+
+    public void playLightCard(Card card) {
+        switch(card.getValue()) {
+            case DRAW_ONE:
+                drawOne();
+                break;
+            case REVERSE:
+                reverse();
+                break;
+            case SKIP:
+                skip();
+                break;
+            case WILD:
+                break;
+            case WILD_DRAW_TWO:
+                break;
+            case FLIP:
+                flip();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void playDarkCard(Card card) {
+        switch(card.getValueDark()) {
+            case FLIP:
+                flip();
+                break;
+
+            case DRAW_FIVE:
+                drawFive();
+                break;
+
+            case SKIP_ALL:
+                skipAll();
+                break;
+
+            case WILD_STACK:
+                break;
+
+            default:
+               break;
+        }
     }
 
     /**
@@ -233,7 +284,7 @@ public class UnoModel {
         topCard.setColourDark(newColour);
         isWildStackCard = true;
         this.newColour = newColour;
-        currPlayerIndex = (currPlayerIndex + direction + players.size()) % players.size();
+        //currPlayerIndex = (currPlayerIndex + direction + players.size()) % players.size();
         notifyViews();
     }
 
@@ -391,7 +442,7 @@ public class UnoModel {
         finalScores.put(winner.getName(), finalScores.get(winner.getName()) + winnerScore);
 
         for(Player p: players) {
-            int SCORE_TO_WIN = 500;
+            int SCORE_TO_WIN = 10;
             if(finalScores.get(p.getName()) >= SCORE_TO_WIN) {
                 return true;
             }
@@ -408,6 +459,10 @@ public class UnoModel {
      * @return true if the card can be legally played now
      */
     public boolean isPlayable(Card card){
+        // If on LIGHT side, WILD_STACK is NOT playable
+        if (side == Side.LIGHT && card.getValueDark() == ValuesDark.WILD_STACK) {
+            return false;
+        }
 
         //wild cards can always be played
         if(side == Side.LIGHT) {
