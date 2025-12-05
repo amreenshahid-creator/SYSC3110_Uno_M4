@@ -231,32 +231,6 @@ public class UnoFrame implements UnoView {
         return topCardLabel;
     }
 
-    /** @return the label indicating the current player's name. */
-    public JLabel getCurrentPlayerLabel() {
-        return currentPlayerLabel;
-    }
-
-    /** @return the button used to advance to the next player. */
-    public JButton getNextButton() {
-        return nextButton;
-    }
-
-
-    /** @return the button used to draw a card. */
-    public JButton getDrawButton() {
-        return drawButton;
-    }
-
-    /** @return the scoreboard panel. */
-    public JPanel getScoreBoardPanel() {
-        return scoreBoardPanel;
-    }
-
-    /** @return the status message label. */
-    public JLabel getStatusLabel() {
-        return statusLabel;
-    }
-
     /** @return the panel holding the top card. */
     public JPanel getTopCardPanel() {
         return topCardPanel;
@@ -677,13 +651,17 @@ public class UnoFrame implements UnoView {
         }
     }
 
+    /**
+     * Updates the top card when undo and redo button are pressed
+     * @param topCard the topCard that will be updated
+     * @param model the {@link UnoModel} instance that determines the current side of the deck
+     */
     public void updateTopCard(Card topCard, UnoModel model) {
         if (topCard == null) {
             return;
         }
-        // Load the image from the card's file name
         String filePath = topCard.getFileName(model.getSide());
-        ImageIcon icon = new ImageIcon(getClass().getResource("/" + filePath));
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/" + filePath))); //loads the new card image
 
         topCardLabel.setIcon(icon);
         topCardLabel.repaint();
