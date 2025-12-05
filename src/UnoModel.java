@@ -64,6 +64,15 @@ public class UnoModel implements Serializable {
     //For serialization
     private static final long serialVersionUID = 1L;
 
+    //Double ended card queues for redo and undo functions
+    private final Deque<Card> redoStack = new ArrayDeque<>();
+    private final Deque<Card> undoStack = new ArrayDeque<>();
+
+    //Double ended player queues for redo and undo functions
+    private final Deque<Player> redoStackPlayer = new ArrayDeque<>();
+    private final Deque<Player> undoStackPlayer = new ArrayDeque<>();
+
+
     /**
      * Generates a random card. In this milestone, there is no physical deck;
      * draws are random and infinite.
@@ -100,6 +109,11 @@ public class UnoModel implements Serializable {
      * @param card the card to play
      */
     public void playCard(Card card) {
+        undoStack.push(card);
+        undoStackPlayer.push(getCurrPlayer());
+        redoStack.clear();
+        redoStackPlayer.clear();
+
         getCurrPlayer().getPersonalDeck().remove(card);
         topCard = card;
 
@@ -768,5 +782,42 @@ public class UnoModel implements Serializable {
                     || v == ValuesDark.FIVE || v == ValuesDark.SIX || v == ValuesDark.SEVEN
                     || v == ValuesDark.EIGHT || v == ValuesDark.NINE;
         }
+    }
+
+
+    public void undo() {
+        Card card = undoStack.pop();
+        Player player = undoStackPlayer.pop();
+
+        player.getPersonalDeck().add(card);
+
+        if(undoStack.isEmpty()) {
+            return;
+        } else {
+            topCard = undoStack.peek();
+        }
+        currPlayerIndex = players.indexOf(player);
+        redoStack.push(card);
+        redoStackPlayer.push(player);
+
+        notifyViews();
+    }
+
+    public void redo() {
+        if(redoStack.isEmpty()) {
+            return;
+        }
+
+        Card card = redoStack.pop();
+        Player player = redoStackPlayer.pop();
+
+        player.getPersonalDeck().remove(card);
+        topCard = card;
+        currPlayerIndex = players.indexOf(player);
+
+        undoStack.push(card);
+        undoStackPlayer.push(player);
+
+        notifyViews();
     }
 }

@@ -3,7 +3,6 @@ import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.Flow;
 
 /**
  * The main GUI window for the UNO game.
@@ -461,7 +460,7 @@ public class UnoFrame implements UnoView {
     }
 
     /**
-     * Adds the controller's ActionListeners to the Draw and Next buttons.
+     * Adds the controller's ActionListeners to the Draw, Next, Save, Load, Undo and Redo buttons.
      * @param controller UnoController instance
      */
     public void addController(UnoController controller) {
@@ -473,6 +472,10 @@ public class UnoFrame implements UnoView {
         saveButton.setActionCommand("Save Game");
         loadButton.addActionListener(controller);
         loadButton.setActionCommand("Load Game");
+        undoButton.addActionListener(controller);
+        undoButton.setActionCommand("Undo");
+        redoButton.addActionListener(controller);
+        redoButton.setActionCommand("Redo");
     }
 
     /**

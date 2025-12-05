@@ -237,6 +237,18 @@ public class UnoController implements ActionListener {
                 view.updateStatusMessage("You have a card that can be played. Please play it instead of drawing.");
             }
         }
+
+        //Handle "Undo" button presses
+        if(command.equals("Undo")) {
+            model.undo();
+            return;
+        }
+
+        //Handle "Redo" button presses
+        if(command.equals("Redo")) {
+            model.redo();
+        }
+
         // Handle card selections
         else {
             Card cardPicked = null;
