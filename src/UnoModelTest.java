@@ -1,7 +1,16 @@
+/**
+ * JUnit Tests for Undo/Redo and Save/Load (Milestone 4)
+ * This test suite checks:
+ *  - Undo and redo on simple plays
+ *  - Undo behaviour for Draw One
+ *  - Undo/redo for Flip side changes
+ *  - Saving and loading the game state
+ */
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 
+/** Undo returns a simple card back to the player's hand */
 public class UnoModelTest {
     @Test
     void undoSimpleCard() {
@@ -21,6 +30,7 @@ public class UnoModelTest {
         assertTrue(curr.getPersonalDeck().contains(card));
         assertNull(model.getTopCard());
     }
+    /** Redo should replay a simple card after undo. */
     @Test
     void redoSimpleCard() {
         UnoModel model = new UnoModel();
@@ -40,7 +50,7 @@ public class UnoModelTest {
         assertFalse(curr.getPersonalDeck().contains(card));
         assertEquals(card, model.getTopCard());
     }
-
+    /** Undo should remove the extra card given by Draw One. */
     @Test
     void undoDrawOneCard() {
         UnoModel model = new UnoModel();
@@ -61,6 +71,7 @@ public class UnoModelTest {
         assertEquals(before, next.getPersonalDeck().size());
         assertTrue(curr.getPersonalDeck().contains(drawOne));
     }
+    /** Undo should restore the side after a Flip card. */
     @Test
     void undoFlipSide() {
         UnoModel model = new UnoModel();
@@ -80,7 +91,7 @@ public class UnoModelTest {
         assertEquals(start, model.getSide());
         assertTrue(curr.getPersonalDeck().contains(flip));
     }
-
+    /** Redo should change the side again after undoing Flip. */
     @Test
     void redoFlipSide() {
         UnoModel model = new UnoModel();
@@ -100,7 +111,7 @@ public class UnoModelTest {
         model.redo();
         assertNotEquals(start, model.getSide());
     }
-
+    /** Save and load should keep players, side, top card, and scores. */
     @Test
     void saveAndLoadKeepsState() throws Exception {
         UnoModel m1 = new UnoModel();
