@@ -3,6 +3,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Flow;
 
 /**
  * The main GUI window for the UNO game.
@@ -51,6 +52,12 @@ public class UnoFrame implements UnoView {
     /** Button to load a saved game. */
     private JButton loadButton;
 
+    /** Button to undo a move. */
+    private JButton undoButton;
+
+    /** Button to redo a move. */
+    private JButton redoButton;
+
     /** Scrollable wrapper for the hand panel. */
     private JScrollPane deckScrollPane;
 
@@ -59,6 +66,7 @@ public class UnoFrame implements UnoView {
 
     /** Parallel list indicating whether each player is an AI (true) or human (false). */
     private java.util.List<Boolean> aiPlayers;
+
 
     /**
      * Constructs the game window and initializes all graphical components.
@@ -100,14 +108,28 @@ public class UnoFrame implements UnoView {
         frame.add(scoreBoardPanel, BorderLayout.WEST);
 
         // ----- Top Card Panel -----
-        topCardPanel = new JPanel(new GridBagLayout());
+        undoButton = new JButton("Undo");
+        redoButton = new JButton("Redo");
+        undoButton.setPreferredSize(new Dimension(100, 50));
+        redoButton.setPreferredSize(new Dimension(100, 50));
+
+        topCardPanel = new JPanel(new BorderLayout());
         topCardPanel.setBorder(BorderFactory.createTitledBorder("Top Card"));
         topCardPanel.setPreferredSize(new Dimension(200, 200));
+
+        JPanel undoRedoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        undoRedoPanel.add(undoButton);
+        undoRedoPanel.add(redoButton);
+
         topCardLabel = new JLabel();
         topCardLabel.setHorizontalAlignment((JLabel.CENTER));
         topCardLabel.setVerticalAlignment(JLabel.CENTER);
-        //topCardLabel.setPreferredSize(new Dimension(80, 120));
+
+        topCardPanel.add(undoRedoPanel, BorderLayout.SOUTH);
+        undoRedoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
+
         topCardPanel.add(topCardLabel);
+
         frame.add(topCardPanel, BorderLayout.CENTER);
 
         // ----- Player Hand Panel -----
