@@ -245,13 +245,12 @@ public class UnoController implements ActionListener {
             view.updateHandPanel(model, this);
             view.updateTopCard(model.getTopCard(), model);
 
+            //Will disable cards and draw button if the current player is AI while undoing
             if(model.getCurrPlayer().isAI()) {
                 frame.disableCards();
             } else {
                 frame.enableCards();
             }
-
-            return;
         }
 
         //Handle "Redo" button presses
@@ -261,14 +260,12 @@ public class UnoController implements ActionListener {
             view.updateHandPanel(model, this);
             view.updateTopCard(model.getTopCard(), model);
 
+            //Will disable cards and draw button if the current player is AI while redoing
             if(model.getCurrPlayer().isAI()) {
                 frame.disableCards();
             } else {
                 frame.enableCards();
             }
-            //maybeRunAITurn();
-            return;
-
         }
 
         // Handle card selections
