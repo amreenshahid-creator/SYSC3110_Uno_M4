@@ -38,6 +38,11 @@ public interface UnoView {
     void updateWinner(String winner, int score);
 
 
+    /**
+     * Updates the top card when undo and redo button are pressed
+     * @param topCard the topCard that will be updated
+     * @param model the {@link UnoModel} instance that determines the current side of the deck
+     */
     void updateTopCard(Card topCard, UnoModel model);
 
 }
