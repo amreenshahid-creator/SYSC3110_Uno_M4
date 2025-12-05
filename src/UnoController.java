@@ -241,12 +241,22 @@ public class UnoController implements ActionListener {
         //Handle "Undo" button presses
         if(command.equals("Undo")) {
             model.undo();
-            return;
+            view.updateStatusMessage("Undo Performed");
+            view.updateHandPanel(model, this);
+            view.updateTopCard(model.getTopCard(), model);
+            frame.enableCards();
+            maybeRunAITurn();
+
         }
 
         //Handle "Redo" button presses
         if(command.equals("Redo")) {
             model.redo();
+            view.updateStatusMessage("Redo Performed");
+            view.updateHandPanel(model, this);
+            view.updateTopCard(model.getTopCard(), model);
+            frame.enableCards();
+            maybeRunAITurn();
         }
 
         // Handle card selections

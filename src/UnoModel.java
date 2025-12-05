@@ -786,20 +786,67 @@ public class UnoModel implements Serializable {
 
 
     public void undo() {
+        if (undoStack.isEmpty()) return;
         Card card = undoStack.pop();
         Player player = undoStackPlayer.pop();
 
-        player.getPersonalDeck().add(card);
+        player.getPersonalDeck().add(card); //Will add the card back in players deck
+
+        if (side == Side.LIGHT) {
+            switch (card.getValue()) {
+
+                //Will remove the drawn card from players deck
+                case DRAW_ONE -> {
+                    int nextPlayerIndex = (players.indexOf(player) + 1 + players.size()) % players.size();
+                    Player nextPlayer = players.get(nextPlayerIndex);
+                    if (!nextPlayer.getPersonalDeck().isEmpty()) {
+                        nextPlayer.getPersonalDeck().remove(nextPlayer.getPersonalDeck().size() - 1);
+                    }
+                }
+                //If a reverse card was played, the undo will re-reverse the direction
+                case REVERSE -> direction = -direction;
+
+                case SKIP -> currPlayerIndex = (currPlayerIndex - 2 * direction + players.size()) % players.size();
+
+                //If a flip card was played, undo we flip the deck back to the other side
+                case FLIP -> {
+                    if(side == Side.LIGHT) {
+                        side = Side.DARK;
+                    } else {
+                        side = Side.LIGHT;
+                    }
+                }
+            }
+
+        } else {
+            switch (card.getValueDark()) {
+                //If draw five was played, undo will remove the 5 cards from the players deck
+                case DRAW_FIVE -> {
+                    int nextPlayerIndex = (players.indexOf(player) + 1 + players.size()) % players.size();
+                    Player nextPlayer = players.get(nextPlayerIndex);
+                    List<Card> deck = nextPlayer.getPersonalDeck();
+                    for (int i = 0; i < 5 && !deck.isEmpty(); i++) deck.remove(deck.size() - 1);
+                }
+
+                //If a flip card was played, undo we flip the deck back to the other side
+                case FLIP -> {
+                    if(side == Side.LIGHT) {
+                        side = Side.DARK;
+                    } else {
+                        side = Side.LIGHT;
+                    }
+                }
+            }
+        }
 
         if(undoStack.isEmpty()) {
-            return;
+            topCard = null;
         } else {
             topCard = undoStack.peek();
         }
-        currPlayerIndex = players.indexOf(player);
+        currPlayerIndex = players.indexOf(player); //update current player
         redoStack.push(card);
         redoStackPlayer.push(player);
-
         notifyViews();
     }
 
@@ -812,8 +859,16 @@ public class UnoModel implements Serializable {
         Player player = redoStackPlayer.pop();
 
         player.getPersonalDeck().remove(card);
+
+        //When redoing cards are played normally
+        if (side == Side.LIGHT) {
+            playLightCard(card);
+        } else {
+            playDarkCard(card);
+        }
+
         topCard = card;
-        currPlayerIndex = players.indexOf(player);
+        currPlayerIndex = players.indexOf(player); //update current player
 
         undoStack.push(card);
         undoStackPlayer.push(player);

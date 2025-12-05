@@ -431,17 +431,19 @@ public class UnoFrame implements UnoView {
     public void handPanelButtons(List<Card> cards, UnoController controller, UnoModel model) {
         handPanel.removeAll();
 
-        if (model.isWildStackCard()) {
-            disableCardButtons();
-        }else {
-            enableCards();
-        }
         for(Card c: cards) {
             JButton cardButton = cardButtons(c,model);
             cardButton.addActionListener(controller);
             handPanel.add(cardButton);
             handPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         }
+
+        if (model.isWildStackCard()) {
+            disableCardButtons();
+        }else {
+            enableCards();
+        }
+
         handPanel.revalidate();
         handPanel.repaint();
     }
@@ -675,6 +677,17 @@ public class UnoFrame implements UnoView {
         }
     }
 
+    public void updateTopCard(Card topCard, UnoModel model) {
+        if (topCard == null) {
+            return;
+        }
+        // Load the image from the card's file name
+        String filePath = topCard.getFileName(model.getSide());
+        ImageIcon icon = new ImageIcon(getClass().getResource("/" + filePath));
+
+        topCardLabel.setIcon(icon);
+        topCardLabel.repaint();
+    }
 
     /**
      * Main method to launch the standalone UNO game window.

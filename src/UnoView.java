@@ -37,4 +37,7 @@ public interface UnoView {
      */
     void updateWinner(String winner, int score);
 
+
+    void updateTopCard(Card topCard, UnoModel model);
+
 }
