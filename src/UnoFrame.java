@@ -436,14 +436,14 @@ public class UnoFrame implements UnoView {
             cardButton.addActionListener(controller);
             handPanel.add(cardButton);
             handPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        }
 
-        if (model.isWildStackCard()) {
-            disableCardButtons();
-        }else {
-            enableCards();
-        }
+            cardButton.setEnabled(!(model.getCurrPlayer().isAI()));
 
+            if(model.getCurrPlayer().isAI()) {
+                nextButton.setEnabled(true);
+                drawButton.setEnabled(false);
+            }
+        }
         handPanel.revalidate();
         handPanel.repaint();
     }

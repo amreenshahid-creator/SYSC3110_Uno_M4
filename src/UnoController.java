@@ -175,7 +175,7 @@ public class UnoController implements ActionListener {
         }
 
         // ---------- SERIALIZATION: Load Game ----------
-        if (command.equals("Load Game")) {
+        else if (command.equals("Load Game")) {
             File saveTarget = frame.chooseLoadFile();
             if (saveTarget != null) {
                 try {
@@ -194,7 +194,7 @@ public class UnoController implements ActionListener {
         }
 
         // Handle "Next Player" button presses
-        if (command.equals("Next Player")) {
+        else if (command.equals("Next Player")) {
             if (!isAdvanced) {
                 model.advance();
             }
@@ -239,24 +239,36 @@ public class UnoController implements ActionListener {
         }
 
         //Handle "Undo" button presses
-        if(command.equals("Undo")) {
+        else if(command.equals("Undo")) {
             model.undo();
             view.updateStatusMessage("Undo Performed");
             view.updateHandPanel(model, this);
             view.updateTopCard(model.getTopCard(), model);
-            frame.enableCards();
-            maybeRunAITurn();
 
+            if(model.getCurrPlayer().isAI()) {
+                frame.disableCards();
+            } else {
+                frame.enableCards();
+            }
+
+            return;
         }
 
         //Handle "Redo" button presses
-        if(command.equals("Redo")) {
+        else if(command.equals("Redo")) {
             model.redo();
             view.updateStatusMessage("Redo Performed");
             view.updateHandPanel(model, this);
             view.updateTopCard(model.getTopCard(), model);
-            frame.enableCards();
-            maybeRunAITurn();
+
+            if(model.getCurrPlayer().isAI()) {
+                frame.disableCards();
+            } else {
+                frame.enableCards();
+            }
+            //maybeRunAITurn();
+            return;
+
         }
 
         // Handle card selections

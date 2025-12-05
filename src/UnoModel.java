@@ -200,6 +200,12 @@ public class UnoModel implements Serializable {
      */
     public void reverse() {
         direction = -direction;
+
+        //If there's two players then reverse acts like a skip next player
+        if (players.size() == 2) {
+            currPlayerIndex = (currPlayerIndex + direction + players.size()) % players.size();
+        }
+
         notifyViews();
     }
 
@@ -460,7 +466,7 @@ public class UnoModel implements Serializable {
         finalScores.put(winner.getName(), finalScores.get(winner.getName()) + winnerScore);
 
         for(Player p: players) {
-            int SCORE_TO_WIN = 10;
+            int SCORE_TO_WIN = 500;
             if(finalScores.get(p.getName()) >= SCORE_TO_WIN) {
                 return true;
             }
