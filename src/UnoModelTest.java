@@ -30,6 +30,7 @@ public class UnoModelTest {
         assertTrue(curr.getPersonalDeck().contains(card));
         assertNull(model.getTopCard());
     }
+    
     /** Redo should replay a simple card after undo. */
     @Test
     void redoSimpleCard() {
@@ -50,6 +51,7 @@ public class UnoModelTest {
         assertFalse(curr.getPersonalDeck().contains(card));
         assertEquals(card, model.getTopCard());
     }
+    
     /** Undo should remove the extra card given by Draw One. */
     @Test
     void undoDrawOneCard() {
@@ -71,6 +73,7 @@ public class UnoModelTest {
         assertEquals(before, next.getPersonalDeck().size());
         assertTrue(curr.getPersonalDeck().contains(drawOne));
     }
+    
     /** Undo should restore the side after a Flip card. */
     @Test
     void undoFlipSide() {
@@ -91,6 +94,7 @@ public class UnoModelTest {
         assertEquals(start, model.getSide());
         assertTrue(curr.getPersonalDeck().contains(flip));
     }
+    
     /** Redo should change the side again after undoing Flip. */
     @Test
     void redoFlipSide() {
@@ -111,6 +115,7 @@ public class UnoModelTest {
         model.redo();
         assertNotEquals(start, model.getSide());
     }
+    
     /** Save and load should keep players, side, top card, and scores. */
     @Test
     void saveAndLoadKeepsState() throws Exception {
