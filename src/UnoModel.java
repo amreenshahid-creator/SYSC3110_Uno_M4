@@ -125,6 +125,10 @@ public class UnoModel implements Serializable {
         notifyViews();
     }
 
+     /**
+     * Plays a card if the current side is LIGHT
+     * @param card the card that is to be played
+     */
     public void playLightCard(Card card) {
         switch(card.getValue()) {
             case DRAW_ONE:
@@ -148,6 +152,10 @@ public class UnoModel implements Serializable {
         }
     }
 
+    /**
+     * Plays a card if the current side is DARK
+     * @param card the card that is to be played
+     */
     public void playDarkCard(Card card) {
         switch(card.getValueDark()) {
             case FLIP:
@@ -576,6 +584,10 @@ public class UnoModel implements Serializable {
         return getCurrPlayer().getPersonalDeck().isEmpty();
     }
 
+     /**
+     * Will get the current side of the deck
+     * @return the current side of the deck
+     */
     public Side getSide() {
         return side;
     }
@@ -641,6 +653,14 @@ public class UnoModel implements Serializable {
         }
     }
 
+    /**
+     * Updates the game based on the current state of the game (used when saving/loading a game) by :
+     * -Clearing players and readding them based on current state
+     * -Clearing final scores and readding them based on current state
+     * -Reassigns currPlayerIndex, direction, topCard, side, isWildStackCard and new colour based on current state
+     *
+     * @param state the current state of the game from {@link GameState}
+     */
     private void applyState(GameState state) {
         players.clear();
         players.addAll(state.players);
@@ -658,6 +678,9 @@ public class UnoModel implements Serializable {
         notifyViews();
     }
 
+     /**
+     * The games state that can be saved and restored by storing all important information from te game from {@link UnoModel}
+     */
     private static class GameState implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -670,6 +693,10 @@ public class UnoModel implements Serializable {
         private final boolean isWildStackCard;
         private final ColoursDark newColour;
 
+         /**
+         * Creates a new state from the current information in UnoModel
+         * @param model the {@link UnoModel} instance that stores the information of the current state
+         */
         GameState(UnoModel model) {
             this.players = new ArrayList<>();
             for (Player p : model.players) {
@@ -791,6 +818,10 @@ public class UnoModel implements Serializable {
     }
 
 
+     /**
+     * Reverses the last action performed by updating current player, reversing the effect
+     * of normal/action cards and by pushing the card onto the redo stack.
+     */
     public void undo() {
         if (undoStack.isEmpty()) return;
         Card card = undoStack.pop();
@@ -856,6 +887,10 @@ public class UnoModel implements Serializable {
         notifyViews();
     }
 
+    /**
+     * Reverses the undo action by reapplying cards, updating current player, handling normal/action cards as if
+     * the card was played normally and by pushing the card onto the undo stack.
+     */
     public void redo() {
         if(redoStack.isEmpty()) {
             return;
